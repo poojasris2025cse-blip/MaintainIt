@@ -1,0 +1,608 @@
+{
+  "info": {
+    "name": "LEAP - Preventive Maintenance Scheduler",
+    "_postman_id": "77189d2b-426b-4e01-9a71-maintainit01",
+    "description": "Complete Postman collection for Preventive Maintenance Scheduler for Equipment (LEAP Java & DBMS Project)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Technicians",
+      "item": [
+        {
+          "name": "TEST 1 - Create Technician (Arun Kumar)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Arun Kumar\",\n    \"email\": \"arun@example.com\",\n    \"phone\": \"9876543210\",\n    \"specialization\": \"Mechanical Maintenance\",\n    \"status\": \"ACTIVE\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/technicians",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "technicians"]
+            }
+          }
+        },
+        {
+          "name": "Get All Technicians",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8080/api/technicians",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "technicians"]
+            }
+          }
+        },
+        {
+          "name": "Get Technician by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8080/api/technicians/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "technicians", "1"]
+            }
+          }
+        },
+        {
+          "name": "Update Technician",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Arun Kumar Senior\",\n    \"email\": \"arun@example.com\",\n    \"phone\": \"9876543210\",\n    \"specialization\": \"Senior Mechanical Specialist\",\n    \"status\": \"ACTIVE\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/technicians/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "technicians", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Machines",
+      "item": [
+        {
+          "name": "TEST 2 - Create Machine (CNC-001)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"machineName\": \"CNC Machine\",\n    \"machineCode\": \"CNC-001\",\n    \"description\": \"Workshop CNC machine\",\n    \"maintenanceType\": \"USAGE_HOURS\",\n    \"maintenanceIntervalHours\": 100,\n    \"maintenanceIntervalDays\": null,\n    \"currentUsageHours\": 0,\n    \"status\": \"ACTIVE\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/machines",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "machines"]
+            }
+          }
+        },
+        {
+          "name": "TEST 3 - Get All Machines",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8080/api/machines",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "machines"]
+            }
+          }
+        },
+        {
+          "name": "Get Machine by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8080/api/machines/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "machines", "1"]
+            }
+          }
+        },
+        {
+          "name": "Update Machine",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"machineName\": \"CNC Milling Machine Pro\",\n    \"machineCode\": \"CNC-001\",\n    \"description\": \"Upgraded CNC milling center\",\n    \"maintenanceType\": \"USAGE_HOURS\",\n    \"maintenanceIntervalHours\": 100,\n    \"maintenanceIntervalDays\": null,\n    \"currentUsageHours\": 0,\n    \"status\": \"ACTIVE\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/machines/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "machines", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Overdue Machines",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8080/api/machines/overdue",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "machines", "overdue"]
+            }
+          }
+        },
+        {
+          "name": "Get Maintenance History for Machine 1",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8080/api/machines/1/maintenance-history",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "machines", "1", "maintenance-history"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Usage Logs",
+      "item": [
+        {
+          "name": "TEST 4 - Create Usage Log 1 (50 hrs)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"machineId\": 1,\n    \"usageHours\": 50,\n    \"remarks\": \"Normal operation\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/usage-logs",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "usage-logs"]
+            }
+          }
+        },
+        {
+          "name": "TEST 5 - Create Usage Log 2 (50 hrs - Reaches 100 hrs)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"machineId\": 1,\n    \"usageHours\": 50,\n    \"remarks\": \"Production usage\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/usage-logs",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "usage-logs"]
+            }
+          }
+        },
+        {
+          "name": "Get All Usage Logs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8080/api/usage-logs",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "usage-logs"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Maintenance Flow",
+      "item": [
+        {
+          "name": "TEST 6 - Check Maintenance for Machine 1 (Generates Task)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "http://localhost:8080/api/maintenance/check/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "maintenance", "check", "1"]
+            }
+          }
+        },
+        {
+          "name": "TEST 7 - Get All Maintenance Tasks",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8080/api/maintenance",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "maintenance"]
+            }
+          }
+        },
+        {
+          "name": "Get Open Maintenance Tasks",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8080/api/maintenance/open",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "maintenance", "open"]
+            }
+          }
+        },
+        {
+          "name": "TEST 8 - Duplicate Check (Expect 409 Conflict)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "http://localhost:8080/api/maintenance/check/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "maintenance", "check", "1"]
+            }
+          }
+        },
+        {
+          "name": "TEST 9 - Complete Maintenance Task 1",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"technicianId\": 1,\n    \"completionNotes\": \"Machine inspected and lubricated.\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/maintenance/1/complete",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "maintenance", "1", "complete"]
+            }
+          }
+        },
+        {
+          "name": "TEST 10 - Check Maintenance when not due (Next interval)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "http://localhost:8080/api/maintenance/check/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "maintenance", "check", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Error Testing & Validations",
+      "item": [
+        {
+          "name": "ERR 1 - Machine with Empty Name (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"machineName\": \"\",\n    \"machineCode\": \"ERR-001\",\n    \"maintenanceType\": \"USAGE_HOURS\",\n    \"maintenanceIntervalHours\": 100\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/machines",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "machines"]
+            }
+          }
+        },
+        {
+          "name": "ERR 2 - Machine with Negative Interval (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"machineName\": \"Lathe\",\n    \"machineCode\": \"LTH-001\",\n    \"maintenanceType\": \"USAGE_HOURS\",\n    \"maintenanceIntervalHours\": -50\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/machines",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "machines"]
+            }
+          }
+        },
+        {
+          "name": "ERR 3 - Duplicate Machine Code (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"machineName\": \"Duplicate CNC\",\n    \"machineCode\": \"CNC-001\",\n    \"maintenanceType\": \"USAGE_HOURS\",\n    \"maintenanceIntervalHours\": 100\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/machines",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "machines"]
+            }
+          }
+        },
+        {
+          "name": "ERR 4 - Technician with Invalid Email (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Suresh\",\n    \"email\": \"invalid-email-address\",\n    \"phone\": \"9876543211\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/technicians",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "technicians"]
+            }
+          }
+        },
+        {
+          "name": "ERR 5 - Duplicate Technician Email (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Arun Clone\",\n    \"email\": \"arun@example.com\",\n    \"phone\": \"9876543219\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/technicians",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "technicians"]
+            }
+          }
+        },
+        {
+          "name": "ERR 6 - Usage Log with Negative Hours (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"machineId\": 1,\n    \"usageHours\": -10,\n    \"remarks\": \"Negative test\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/usage-logs",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "usage-logs"]
+            }
+          }
+        },
+        {
+          "name": "ERR 7 - Usage Log for Non-Existing Machine (404)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"machineId\": 999,\n    \"usageHours\": 20,\n    \"remarks\": \"Non-existing\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/usage-logs",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "usage-logs"]
+            }
+          }
+        },
+        {
+          "name": "ERR 8 - Maintenance Task for Non-Existing Machine (404)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"machineId\": 999,\n    \"taskType\": \"USAGE_HOURS\",\n    \"description\": \"Invalid machine task\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/maintenance",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "maintenance"]
+            }
+          }
+        },
+        {
+          "name": "ERR 9 - Complete Task with Non-Existing Technician (404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"technicianId\": 999,\n    \"completionNotes\": \"Completed by ghost\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/maintenance/1/complete",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "maintenance", "1", "complete"]
+            }
+          }
+        },
+        {
+          "name": "ERR 10 - Complete Already Completed Task (409)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"technicianId\": 1,\n    \"completionNotes\": \"Trying to complete again\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/maintenance/1/complete",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "maintenance", "1", "complete"]
+            }
+          }
+        },
+        {
+          "name": "ERR 11 - Request Non-Existing Machine (404)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8080/api/machines/999",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "machines", "999"]
+            }
+          }
+        },
+        {
+          "name": "ERR 12 - Request Non-Existing Technician (404)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8080/api/technicians/999",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "technicians", "999"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

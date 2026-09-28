@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Dashboard')}"></head>
+<body>
+
+<nav th:replace="~{fragments :: navbar('dashboard')}"></nav>
+
+<div class="container">
+    <div th:replace="~{fragments :: alerts}"></div>
+
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Workshop Maintenance Dashboard</h1>
+            <p class="page-subtitle">Real-time equipment preventive maintenance monitoring</p>
+        </div>
+        <div class="btn-group">
+            <a th:href="@{/web/usage-logs}" class="btn btn-primary">+ Log Machine Usage</a>
+            <a th:href="@{/web/machines}" class="btn btn-secondary">+ Add Machine</a>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card accent-blue">
+            <div class="stat-header">
+                <span>Total Machines</span>
+                <span>🏭</span>
+            </div>
+            <div class="stat-value" th:text="${totalMachines}">0</div>
+            <div class="stat-desc" th:text="${activeMachines} + ' active machines'">0 active</div>
+        </div>
+
+        <div class="stat-card accent-red">
+            <div class="stat-header">
+                <span>Overdue Machines</span>
+                <span>⚠️</span>
+            </div>
+            <div class="stat-value" th:text="${overdueMachines.size()}">0</div>
+            <div class="stat-desc">Exceeded usage/date intervals</div>
+        </div>
+
+        <div class="stat-card accent-orange">
+            <div class="stat-header">
+                <span>Pending Tasks</span>
+                <span>🔧</span>
+            </div>
+            <div class="stat-value" th:text="${openTasks.size()}">0</div>
+            <div class="stat-desc">Open or in-progress</div>
+        </div>
+
+        <div class="stat-card accent-green">
+            <div class="stat-header">
+                <span>Technicians</span>
+                <span>👷</span>
+            </div>
+            <div class="stat-value" th:text="${totalTechnicians}">0</div>
+            <div class="stat-desc">Registered maintenance staff</div>
+        </div>
+    </div>
+
+    <!-- Overdue Machines Section -->
+    <div class="table-card">
+        <div class="table-header-box">
+            <div>
+                <h3>⚠️ Overdue Machines Needing Maintenance</h3>
+                <p class="stat-desc">Machines that have reached or exceeded maintenance intervals</p>
+            </div>
+            <span class="badge badge-danger" th:text="${overdueMachines.size()} + ' Overdue'">0 Overdue</span>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Machine</th>
+                        <th>Code</th>
+                        <th>Type</th>
+                        <th>Interval</th>
+                        <th>Current Usage / Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(overdueMachines)}">
+                        <td colspan="7" class="empty-state">
+                            <div class="empty-state-icon">✅</div>
+                            <p>All machines are up to date! No maintenance overdue.</p>
+                        </td>
+                    </tr>
+                    <tr th:each="m : ${overdueMachines}">
+                        <td th:text="${m.machineName}">CNC Machine</td>
+                        <td><strong th:text="${m.machineCode}">CNC-001</strong></td>
+                        <td><span class="badge badge-info" th:text="${m.maintenanceType}">USAGE_HOURS</span></td>
+                        <td>
+                            <span th:if="${m.maintenanceType == 'USAGE_HOURS'}" th:text="${m.maintenanceIntervalHours} + ' hrs'">100 hrs</span>
+                            <span th:if="${m.maintenanceType == 'CALENDAR_DAYS'}" th:text="${m.maintenanceIntervalDays} + ' days'">30 days</span>
+                        </td>
+                        <td>
+                            <span th:if="${m.maintenanceType == 'USAGE_HOURS'}" th:text="${m.currentUsageHours} + ' hrs (Last: ' + ${m.lastMaintenanceUsageHours} + ')'">100 hrs</span>
+                            <span th:if="${m.maintenanceType == 'CALENDAR_DAYS'}" th:text="'Last: ' + ${m.lastMaintenanceDate}">2026-08-25</span>
+                        </td>
+                        <td>
+                            <span th:class="'badge badge-' + ${#strings.toLowerCase(m.status)}" th:text="${m.status}">ACTIVE</span>
+                        </td>
+                        <td>
+                            <form th:action="@{/web/maintenance/check/{id}(id=${m.id})}" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-warning btn-sm">⚡ Schedule Maintenance</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Active Open Tasks Section -->
+    <div class="table-card">
+        <div class="table-header-box">
+            <div>
+                <h3>🔧 Active Maintenance Tasks</h3>
+                <p class="stat-desc">Tasks currently pending completion by technicians</p>
+            </div>
+            <a th:href="@{/web/maintenance}" class="btn btn-secondary btn-sm">View All Tasks</a>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Task #</th>
+                        <th>Machine</th>
+                        <th>Technician</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Due Info</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(openTasks)}">
+                        <td colspan="8" class="empty-state">
+                            <div class="empty-state-icon">📋</div>
+                            <p>No open maintenance tasks currently scheduled.</p>
+                        </td>
+                    </tr>
+                    <tr th:each="task : ${openTasks}">
+                        <td th:text="'#' + ${task.id}">#1</td>
+                        <td>
+                            <strong th:text="${task.machine.machineName}">CNC Machine</strong>
+                            <div style="font-size:0.8rem; color:var(--text-muted);" th:text="${task.machine.machineCode}">CNC-001</div>
+                        </td>
+                        <td th:text="${task.technician != null ? task.technician.name : 'Unassigned'}">Unassigned</td>
+                        <td><span class="badge badge-info" th:text="${task.taskType}">USAGE_HOURS</span></td>
+                        <td th:text="${task.description}">Scheduled preventive maintenance</td>
+                        <td>
+                            <span th:if="${task.dueUsageHours != null}" th:text="${task.dueUsageHours} + ' hrs'">100 hrs</span>
+                            <span th:if="${task.dueDate != null}" th:text="${task.dueDate}">2026-09-30</span>
+                        </td>
+                        <td><span class="badge badge-open" th:text="${task.status}">OPEN</span></td>
+                        <td>
+                            <a th:href="@{/web/maintenance#complete-section}" class="btn btn-success btn-sm">Complete Task</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>

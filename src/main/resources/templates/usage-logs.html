@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Machine Usage Logs')}"></head>
+<body>
+
+<nav th:replace="~{fragments :: navbar('usageLogs')}"></nav>
+
+<div class="container">
+    <div th:replace="~{fragments :: alerts}"></div>
+
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Machine Usage Logs</h1>
+            <p class="page-subtitle">Record and monitor equipment operational hours</p>
+        </div>
+    </div>
+
+    <!-- Add Usage Log Form -->
+    <div class="form-card">
+        <h3 style="margin-bottom: 1.25rem;">Record Operational Usage</h3>
+        <form th:action="@{/web/usage-logs/add}" method="post">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="machineId">Select Machine *</label>
+                    <select id="machineId" name="machineId" required>
+                        <option value="" disabled selected>-- Select a machine --</option>
+                        <option th:each="m : ${machines}"
+                                th:value="${m.id}"
+                                th:text="${m.machineName} + ' (' + ${m.machineCode} + ') - Current: ' + ${m.currentUsageHours} + ' hrs'">
+                            CNC Machine (CNC-001)
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="usageHours">Hours Run *</label>
+                    <input type="number" id="usageHours" name="usageHours" min="0" required
+                           placeholder="e.g. 50">
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="remarks">Remarks / Operational Notes</label>
+                    <input type="text" id="remarks" name="remarks" placeholder="e.g. Production shift run, normal operation">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">+ Add Usage Log</button>
+        </form>
+    </div>
+
+    <!-- Usage Logs Table -->
+    <div class="table-card">
+        <div class="table-header-box">
+            <h3>Usage History</h3>
+            <span class="stat-desc" th:text="${usageLogs.size()} + ' total logs recorded'">0 logs</span>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Log #</th>
+                        <th>Machine</th>
+                        <th>Usage Added</th>
+                        <th>Current Machine Total</th>
+                        <th>Recorded Date/Time</th>
+                        <th>Remarks</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(usageLogs)}">
+                        <td colspan="7" class="empty-state">
+                            <div class="empty-state-icon">⏱️</div>
+                            <p>No usage logs recorded yet. Log equipment operating hours above!</p>
+                        </td>
+                    </tr>
+                    <tr th:each="log : ${usageLogs}">
+                        <td th:text="'#' + ${log.id}">#1</td>
+                        <td>
+                            <strong th:text="${log.machine.machineName}">CNC Machine</strong>
+                            <div style="font-size:0.8rem; color:var(--text-muted);" th:text="${log.machine.machineCode}">CNC-001</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-info" th:text="'+' + ${log.usageHours} + ' hrs'">+50 hrs</span>
+                        </td>
+                        <td>
+                            <strong th:text="${log.machine.currentUsageHours} + ' hrs'">100 hrs</strong>
+                        </td>
+                        <td th:text="${log.recordedAt}">2026-09-28T10:30:00</td>
+                        <td th:text="${log.remarks != null && !log.remarks.isEmpty() ? log.remarks : '—'}">Normal operation</td>
+                        <td>
+                            <form th:action="@{/web/usage-logs/delete/{id}(id=${log.id})}" method="post" style="display:inline;"
+                                  onsubmit="return confirm('Delete this usage log entry?');">
+                                <button type="submit" class="btn btn-danger btn-sm" title="Delete log">🗑️</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>

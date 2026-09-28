@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Maintenance Tasks')}"></head>
+<body>
+
+<nav th:replace="~{fragments :: navbar('maintenance')}"></nav>
+
+<div class="container">
+    <div th:replace="~{fragments :: alerts}"></div>
+
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Preventive Maintenance Tasks</h1>
+            <p class="page-subtitle">Schedule, assign, and track equipment maintenance workflows</p>
+        </div>
+    </div>
+
+    <!-- Quick Actions Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        
+        <!-- Check & Generate Maintenance Card -->
+        <div class="form-card" style="margin-bottom: 0;">
+            <h3 style="margin-bottom: 1rem;">⚡ Check Machine Interval Due</h3>
+            <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom: 1rem;">
+                Evaluates operating hours or calendar days against thresholds and generates a maintenance task if due.
+            </p>
+            <form id="checkForm" method="post" onsubmit="event.preventDefault(); var id=document.getElementById('checkMachineId').value; if(id) { this.action='/web/maintenance/check/' + id; this.submit(); }">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label for="checkMachineId">Select Machine to Check *</label>
+                    <select id="checkMachineId" required>
+                        <option value="" disabled selected>-- Select a machine --</option>
+                        <option th:each="m : ${machines}"
+                                th:value="${m.id}"
+                                th:text="${m.machineName} + ' (' + ${m.machineCode} + ') - ' + ${m.maintenanceType}">
+                            CNC Machine (CNC-001)
+                        </option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-warning" style="width: 100%;">Check & Generate Task</button>
+            </form>
+        </div>
+
+        <!-- Complete Maintenance Task Card -->
+        <div class="form-card" id="complete-section" style="margin-bottom: 0;">
+            <h3 style="margin-bottom: 1rem;">✅ Complete Maintenance Task</h3>
+            <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom: 1rem;">
+                Marks task completed, logs technician notes, and updates the machine's maintenance baseline.
+            </p>
+            <form id="completeForm" method="post" onsubmit="event.preventDefault(); var id=document.getElementById('completeTaskId').value; if(id) { this.action='/web/maintenance/complete/' + id; this.submit(); }">
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label for="completeTaskId">Select Open Task *</label>
+                    <select id="completeTaskId" required>
+                        <option value="" disabled selected>-- Select open task --</option>
+                        <option th:each="t : ${openTasks}"
+                                th:value="${t.id}"
+                                th:text="'#' + ${t.id} + ' - ' + ${t.machine.machineName} + ' (' + ${t.taskType} + ')'">
+                            #1 - CNC Machine (USAGE_HOURS)
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label for="technicianId">Assigned Technician *</label>
+                    <select id="technicianId" name="technicianId" required>
+                        <option value="" disabled selected>-- Select technician --</option>
+                        <option th:each="tech : ${technicians}"
+                                th:value="${tech.id}"
+                                th:text="${tech.name} + ' (' + ${tech.specialization} + ')'">
+                            Arun Kumar
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label for="completionNotes">Completion Notes *</label>
+                    <input type="text" id="completionNotes" name="completionNotes" required
+                           placeholder="e.g. Machine inspected, lubricated, and calibrated.">
+                </div>
+
+                <button type="submit" class="btn btn-success" style="width: 100%;">Mark Task Completed</button>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- Maintenance Tasks Table -->
+    <div class="table-card">
+        <div class="table-header-box">
+            <div>
+                <h3>All Maintenance Tasks</h3>
+                <p class="stat-desc">Complete maintenance task history and scheduled jobs</p>
+            </div>
+            <span class="stat-desc" th:text="${tasks.size()} + ' total tasks'">0 tasks</span>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Task #</th>
+                        <th>Machine</th>
+                        <th>Technician</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Threshold / Due</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Completed</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(tasks)}">
+                        <td colspan="10" class="empty-state">
+                            <div class="empty-state-icon">🔧</div>
+                            <p>No maintenance tasks found. Trigger a check above or schedule a new task!</p>
+                        </td>
+                    </tr>
+                    <tr th:each="t : ${tasks}">
+                        <td th:text="'#' + ${t.id}">#1</td>
+                        <td>
+                            <strong th:text="${t.machine.machineName}">CNC Machine</strong>
+                            <div style="font-size:0.8rem; color:var(--text-muted);" th:text="${t.machine.machineCode}">CNC-001</div>
+                        </td>
+                        <td>
+                            <span th:if="${t.technician != null}" th:text="${t.technician.name}">Arun Kumar</span>
+                            <span th:if="${t.technician == null}" style="color:var(--text-muted); font-size:0.85rem;">Unassigned</span>
+                        </td>
+                        <td><span class="badge badge-info" th:text="${t.taskType}">USAGE_HOURS</span></td>
+                        <td>
+                            <div th:text="${t.description}">Preventive maintenance</div>
+                            <div th:if="${t.completionNotes != null}" style="font-size:0.8rem; color:var(--success); margin-top:2px;">
+                                <em>Notes: <span th:text="${t.completionNotes}"></span></em>
+                            </div>
+                        </td>
+                        <td>
+                            <span th:if="${t.dueUsageHours != null}" th:text="${t.dueUsageHours} + ' hrs'">100 hrs</span>
+                            <span th:if="${t.dueDate != null}" th:text="${t.dueDate}">2026-09-30</span>
+                        </td>
+                        <td>
+                            <span th:class="'badge badge-' + ${#strings.toLowerCase(t.status)}" th:text="${t.status}">OPEN</span>
+                        </td>
+                        <td th:text="${#temporals.format(t.createdAt, 'yyyy-MM-dd HH:mm')}">2026-09-28 10:30</td>
+                        <td>
+                            <span th:if="${t.completedAt != null}" th:text="${#temporals.format(t.completedAt, 'yyyy-MM-dd HH:mm')}">2026-09-28 11:00</span>
+                            <span th:if="${t.completedAt == null}" style="color:var(--text-muted);">—</span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <button th:if="${t.status != 'COMPLETED'}"
+                                        type="button" class="btn btn-success btn-sm"
+                                        th:onclick="'document.getElementById(\'completeTaskId\').value = ' + ${t.id} + '; document.getElementById(\'complete-section\').scrollIntoView({behavior: \'smooth\'});'">
+                                    Complete
+                                </button>
+                                <form th:action="@{/web/maintenance/delete/{id}(id=${t.id})}" method="post" style="display:inline;"
+                                      onsubmit="return confirm('Delete this maintenance task record?');">
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Delete task">🗑️</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Machine Management')}"></head>
+<body>
+
+<nav th:replace="~{fragments :: navbar('machines')}"></nav>
+
+<div class="container">
+    <div th:replace="~{fragments :: alerts}"></div>
+
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Machine Management</h1>
+            <p class="page-subtitle">Register, track and schedule workshop machinery</p>
+        </div>
+    </div>
+
+    <!-- Add / Edit Machine Form -->
+    <div class="form-card">
+        <h3 style="margin-bottom: 1.25rem;" th:text="${editMachine != null ? 'Edit Machine #' + editMachine.id : 'Add New Machine'}">Add New Machine</h3>
+        <form th:action="${editMachine != null} ? @{/web/machines/edit/{id}(id=${editMachine.id})} : @{/web/machines/add}" method="post">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="machineName">Machine Name *</label>
+                    <input type="text" id="machineName" name="machineName" required
+                           th:value="${editMachine != null ? editMachine.machineName : ''}"
+                           placeholder="e.g. CNC Milling Machine">
+                </div>
+
+                <div class="form-group">
+                    <label for="machineCode">Machine Code (Unique) *</label>
+                    <input type="text" id="machineCode" name="machineCode" required
+                           th:value="${editMachine != null ? editMachine.machineCode : ''}"
+                           placeholder="e.g. CNC-001">
+                </div>
+
+                <div class="form-group">
+                    <label for="maintenanceType">Maintenance Interval Type *</label>
+                    <select id="maintenanceType" name="maintenanceType" required>
+                        <option value="USAGE_HOURS" th:selected="${editMachine != null && editMachine.maintenanceType == 'USAGE_HOURS'}">Based on Usage Hours</option>
+                        <option value="CALENDAR_DAYS" th:selected="${editMachine != null && editMachine.maintenanceType == 'CALENDAR_DAYS'}">Based on Calendar Days</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="maintenanceIntervalHours">Interval Hours (for Usage Type)</label>
+                    <input type="number" id="maintenanceIntervalHours" name="maintenanceIntervalHours" min="1"
+                           th:value="${editMachine != null ? editMachine.maintenanceIntervalHours : ''}"
+                           placeholder="e.g. 100">
+                </div>
+
+                <div class="form-group">
+                    <label for="maintenanceIntervalDays">Interval Days (for Calendar Type)</label>
+                    <input type="number" id="maintenanceIntervalDays" name="maintenanceIntervalDays" min="1"
+                           th:value="${editMachine != null ? editMachine.maintenanceIntervalDays : ''}"
+                           placeholder="e.g. 30">
+                </div>
+
+                <div class="form-group">
+                    <label for="currentUsageHours">Initial / Current Usage (Hours)</label>
+                    <input type="number" id="currentUsageHours" name="currentUsageHours" min="0"
+                           th:value="${editMachine != null ? editMachine.currentUsageHours : '0'}"
+                           placeholder="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Machine Status</label>
+                    <select id="status" name="status">
+                        <option value="ACTIVE" th:selected="${editMachine != null && editMachine.status == 'ACTIVE'}">ACTIVE</option>
+                        <option value="MAINTENANCE" th:selected="${editMachine != null && editMachine.status == 'MAINTENANCE'}">MAINTENANCE</option>
+                        <option value="INACTIVE" th:selected="${editMachine != null && editMachine.status == 'INACTIVE'}">INACTIVE</option>
+                    </select>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="description">Description & Specifications</label>
+                    <textarea id="description" name="description" placeholder="Workshop CNC machine with automated tool changer..."
+                              th:text="${editMachine != null ? editMachine.description : ''}"></textarea>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary" th:text="${editMachine != null ? 'Update Machine' : 'Save Machine'}">Save Machine</button>
+                <a th:if="${editMachine != null}" th:href="@{/web/machines}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Machines List Table -->
+    <div class="table-card">
+        <div class="table-header-box">
+            <h3>Registered Machines</h3>
+            <span class="stat-desc" th:text="${machines.size()} + ' total machines'">0 total machines</span>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th>Type</th>
+                        <th>Interval</th>
+                        <th>Usage Hours</th>
+                        <th>Last Maintenance</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(machines)}">
+                        <td colspan="9" class="empty-state">
+                            <div class="empty-state-icon">🏭</div>
+                            <p>No machines registered yet. Use the form above to add your first machine!</p>
+                        </td>
+                    </tr>
+                    <tr th:each="m : ${machines}">
+                        <td th:text="'#' + ${m.id}">#1</td>
+                        <td>
+                            <strong th:text="${m.machineName}">CNC Machine</strong>
+                            <div th:if="${m.description != null}" style="font-size:0.8rem; color:var(--text-muted);" th:text="${m.description}"></div>
+                        </td>
+                        <td><code th:text="${m.machineCode}">CNC-001</code></td>
+                        <td><span class="badge badge-info" th:text="${m.maintenanceType}">USAGE_HOURS</span></td>
+                        <td>
+                            <span th:if="${m.maintenanceType == 'USAGE_HOURS'}" th:text="${m.maintenanceIntervalHours} + ' hrs'">100 hrs</span>
+                            <span th:if="${m.maintenanceType == 'CALENDAR_DAYS'}" th:text="${m.maintenanceIntervalDays} + ' days'">30 days</span>
+                        </td>
+                        <td>
+                            <strong th:text="${m.currentUsageHours} + ' hrs'">0 hrs</strong>
+                        </td>
+                        <td>
+                            <div th:if="${m.lastMaintenanceUsageHours != null}" th:text="'Usage: ' + ${m.lastMaintenanceUsageHours} + ' hrs'"></div>
+                            <div th:if="${m.lastMaintenanceDate != null}" style="font-size:0.8rem; color:var(--text-muted);" th:text="'Date: ' + ${m.lastMaintenanceDate}"></div>
+                            <div th:if="${m.lastMaintenanceUsageHours == 0 && m.lastMaintenanceDate == null}" style="color:var(--text-muted); font-size:0.85rem;">None</div>
+                        </td>
+                        <td>
+                            <span th:class="'badge badge-' + ${#strings.toLowerCase(m.status)}" th:text="${m.status}">ACTIVE</span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <form th:action="@{/web/maintenance/check/{id}(id=${m.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-warning btn-sm" title="Check maintenance schedule">⚡ Check</button>
+                                </form>
+                                <a th:href="@{/web/machines/edit/{id}(id=${m.id})}" class="btn btn-secondary btn-sm" title="Edit machine">✏️ Edit</a>
+                                <form th:action="@{/web/machines/delete/{id}(id=${m.id})}" method="post" style="display:inline;"
+                                      onsubmit="return confirm('Are you sure you want to delete this machine?');">
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Delete machine">🗑️</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>

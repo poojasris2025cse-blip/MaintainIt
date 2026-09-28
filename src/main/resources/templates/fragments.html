@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' - MaintainIt'">MaintainIt - Preventive Maintenance</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- Navbar Fragment -->
+<nav th:fragment="navbar(activePage)" class="navbar">
+    <a th:href="@{/dashboard}" class="brand">
+        <span>⚙️ MaintainIt</span>
+        <span class="brand-badge">Workshop</span>
+    </a>
+    <ul class="nav-links">
+        <li><a th:href="@{/dashboard}" class="nav-link" th:classappend="${activePage == 'dashboard'} ? 'active'">Dashboard</a></li>
+        <li><a th:href="@{/web/machines}" class="nav-link" th:classappend="${activePage == 'machines'} ? 'active'">Machines</a></li>
+        <li><a th:href="@{/web/technicians}" class="nav-link" th:classappend="${activePage == 'technicians'} ? 'active'">Technicians</a></li>
+        <li><a th:href="@{/web/usage-logs}" class="nav-link" th:classappend="${activePage == 'usageLogs'} ? 'active'">Usage Logs</a></li>
+        <li><a th:href="@{/web/maintenance}" class="nav-link" th:classappend="${activePage == 'maintenance'} ? 'active'">Maintenance Tasks</a></li>
+    </ul>
+</nav>
+
+<!-- Alerts Fragment -->
+<div th:fragment="alerts">
+    <div th:if="${successMessage}" class="alert alert-success">
+        <span th:text="${successMessage}">Operation successful!</span>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <span th:text="${errorMessage}">An error occurred!</span>
+    </div>
+</div>
+
+<!-- Footer Fragment -->
+<footer th:fragment="footer">
+    <p>&copy; 2026 LEAP Maintenance Scheduler &bull; Java & Spring Boot &bull; Connected to MySQL: <code>leap_maintenance</code></p>
+</footer>
+
+</body>
+</html>

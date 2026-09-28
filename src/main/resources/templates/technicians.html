@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Technician Management')}"></head>
+<body>
+
+<nav th:replace="~{fragments :: navbar('technicians')}"></nav>
+
+<div class="container">
+    <div th:replace="~{fragments :: alerts}"></div>
+
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Technician Management</h1>
+            <p class="page-subtitle">Manage maintenance engineers and technicians</p>
+        </div>
+    </div>
+
+    <!-- Add / Edit Technician Form -->
+    <div class="form-card">
+        <h3 style="margin-bottom: 1.25rem;" th:text="${editTech != null ? 'Edit Technician #' + editTech.id : 'Register New Technician'}">Register New Technician</h3>
+        <form th:action="${editTech != null} ? @{/web/technicians/edit/{id}(id=${editTech.id})} : @{/web/technicians/add}" method="post">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="name">Full Name *</label>
+                    <input type="text" id="name" name="name" required
+                           th:value="${editTech != null ? editTech.name : ''}"
+                           placeholder="e.g. Arun Kumar">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address (Unique) *</label>
+                    <input type="email" id="email" name="email" required
+                           th:value="${editTech != null ? editTech.email : ''}"
+                           placeholder="e.g. arun@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="text" id="phone" name="phone"
+                           th:value="${editTech != null ? editTech.phone : ''}"
+                           placeholder="e.g. 9876543210">
+                </div>
+
+                <div class="form-group">
+                    <label for="specialization">Specialization</label>
+                    <input type="text" id="specialization" name="specialization"
+                           th:value="${editTech != null ? editTech.specialization : ''}"
+                           placeholder="e.g. Mechanical Maintenance, Electrical">
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Technician Status</label>
+                    <select id="status" name="status">
+                        <option value="ACTIVE" th:selected="${editTech != null && editTech.status == 'ACTIVE'}">ACTIVE</option>
+                        <option value="INACTIVE" th:selected="${editTech != null && editTech.status == 'INACTIVE'}">INACTIVE</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary" th:text="${editTech != null ? 'Update Technician' : 'Register Technician'}">Register Technician</button>
+                <a th:if="${editTech != null}" th:href="@{/web/technicians}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Technicians List Table -->
+    <div class="table-card">
+        <div class="table-header-box">
+            <h3>Registered Technicians</h3>
+            <span class="stat-desc" th:text="${technicians.size()} + ' total technicians'">0 total</span>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Specialization</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(technicians)}">
+                        <td colspan="7" class="empty-state">
+                            <div class="empty-state-icon">👷</div>
+                            <p>No technicians registered yet. Use the form above to add a technician.</p>
+                        </td>
+                    </tr>
+                    <tr th:each="t : ${technicians}">
+                        <td th:text="'#' + ${t.id}">#1</td>
+                        <td><strong th:text="${t.name}">Arun Kumar</strong></td>
+                        <td th:text="${t.email}">arun@example.com</td>
+                        <td th:text="${t.phone}">9876543210</td>
+                        <td><span class="badge badge-info" th:text="${t.specialization}">Mechanical</span></td>
+                        <td>
+                            <span th:class="'badge badge-' + ${#strings.toLowerCase(t.status)}" th:text="${t.status}">ACTIVE</span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a th:href="@{/web/technicians/edit/{id}(id=${t.id})}" class="btn btn-secondary btn-sm">✏️ Edit</a>
+                                <form th:action="@{/web/technicians/delete/{id}(id=${t.id})}" method="post" style="display:inline;"
+                                      onsubmit="return confirm('Are you sure you want to delete this technician?');">
+                                    <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>
